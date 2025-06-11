@@ -19,6 +19,8 @@ jobs:
         run: pip install .[test,ci]
       - name: install pydantic
         run: pip install pydantic==2.11.5
+      - name: install mypy
+        run: pip install mypy==1.15.0
       - name: run mypy
         run: mypy beanie
       - uses: pre-commit/action@v3.0.1
