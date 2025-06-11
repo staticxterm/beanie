@@ -1,0 +1,26 @@
+name: Manual trigger mypy test
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  run-tests:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.9
+          cache: pip
+          cache-dependency-path: pyproject.toml
+      - name: install dependencies
+        run: pip install .[test,ci]
+      - name: install pydantic
+        run: pip install pydantic==2.11.5
+      - name: run mypy
+        run: mypy beanie
+      - uses: pre-commit/action@v3.0.1
+        with:
+          extra_args: --all-files --verbose
