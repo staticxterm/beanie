@@ -155,13 +155,6 @@ class Text(BaseFindEvaluationOperator):
         case_sensitive: bool = False,
         diacritic_sensitive: Optional[bool] = False,
     ):
-        """
-
-        :param search: str
-        :param language: Optional[str] = None
-        :param case_sensitive: bool = False
-        :param diacritic_sensitive: Optional[bool] = False
-        """
         self.search = search
         self.language = language
         self.case_sensitive = case_sensitive

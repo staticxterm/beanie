@@ -1,0 +1,14 @@
+{% extends "_base/class.html.jinja" %}
+
+{% block contents %}
+  <div class="doc-class-blockquote">
+    {# render everything before children #}
+    {% block bases %}{{ super() }}{% endblock bases %}
+    {% block inheritance_diagram %}{{ super() }}{% endblock inheritance_diagram %}
+    {% block docstring %}{{ super() }}{% endblock docstring %}
+    {% block summary %}{{ super() }}{% endblock summary %}
+    {% block source %}{{ super() }}{% endblock source %}
+  </div>
+  {# render children outside the blockquote #}
+  {% block children %}{{ super() }}{% endblock children %}
+{% endblock contents %}

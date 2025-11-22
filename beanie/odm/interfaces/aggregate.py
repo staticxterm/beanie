@@ -54,13 +54,13 @@ class AggregateInterface:
     ]:
         """
         Aggregate over collection.
-        Returns [AggregationQuery](query.md#aggregationquery) query object
+        Returns [AggregationQuery](query.md#beanie.odm.queries.aggregation.AggregationQuery) query object
         :param aggregation_pipeline: list - aggregation pipeline
         :param projection_model: Type[BaseModel]
         :param session: Optional[AsyncClientSession] - pymongo session.
         :param ignore_cache: bool
         :param **pymongo_kwargs: pymongo native parameters for aggregate operation
-        :return: [AggregationQuery](query.md#aggregationquery)
+        :return: [AggregationQuery](query.md#beanie.odm.queries.aggregation.AggregationQuery)
         """
         return cls.find_all().aggregate(
             aggregation_pipeline=aggregation_pipeline,

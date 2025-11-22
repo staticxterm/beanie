@@ -37,12 +37,6 @@ MONGODB-AWS authentication requires `aws` extra dependency:
 pip install "beanie[aws]"
 ```
 
-Support for mongodb+srv:// URIs requires `srv` extra dependency:
-
-```bash
-pip install "beanie[srv]"
-```
-
 OCSP requires `ocsp` extra dependency:
 
 ```bash
@@ -74,8 +68,11 @@ You can install all dependencies automatically with the following
 command:
 
 ```bash
-pip install "beanie[gssapi,aws,ocsp,snappy,srv,zstd,encryption]"
+pip install "beanie[gssapi,aws,ocsp,snappy,zstd,encryption]"
 ```
+
+!!! note
+    Support for `mongodb+srv://` URIs requires the `dnspython` package.
 
 ## Initialization
 

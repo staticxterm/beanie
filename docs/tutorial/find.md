@@ -1,4 +1,4 @@
-To populate the database, please run the examples from the [previous section of the tutorial](inserting-into-the-database.md) 
+To populate the database, please run the examples from the [previous section of the tutorial](insert.md) 
 as we will be using the same setup here.
 
 ## Finding documents
@@ -64,14 +64,14 @@ products = await Product.find({"price": 1000}).to_list()
 ## Finding single documents
 
 Sometimes you will only need to find a single document. 
-If you are searching by `id`, then you can use the [get](../api-documentation/document.md/#documentget) method:
+If you are searching by `id`, then you can use the [get](../api-documentation/document.md/#beanie.odm.documents.Document.get) method:
 
 ```python
 bar = await Product.get("608da169eb9e17281f0ab2ff")
 ```
 
 To find a single document via a single search criterion,
-you can use the [find_one](../api-documentation/interfaces.md/#findinterfacefind_one) method:
+you can use the [find_one](../api-documentation/interfaces.md/#beanie.odm.interfaces.find.FindInterface.find_one) method:
 
 ```python
 bar = await Product.find_one(Product.name == "Peanut Bar")
@@ -79,7 +79,7 @@ bar = await Product.find_one(Product.name == "Peanut Bar")
 
 ## Syncing from the Database
 
-If you wish to apply changes from the database to the document, utilize the [sync](../api-documentation/document.md/#documentsync) method:
+If you wish to apply changes from the database to the document, utilize the [sync](../api-documentation/document.md/#beanie.odm.documents.Document.sync) method:
 
 ```python
 await bar.sync()
@@ -134,7 +134,7 @@ chocolates = await Product
 
 ### Sorting
 
-Sorting can be done with the [sort](../api-documentation/query.md/#findmanysort) method.
+Sorting can be done with the [sort](../api-documentation/query.md/#beanie.odm.queries.find.FindMany.sort) method.
 
 You can pass it one or multiple fields to sort by. You may optionally specify a `+` or `-` 
 (denoting ascending and descending respectively).

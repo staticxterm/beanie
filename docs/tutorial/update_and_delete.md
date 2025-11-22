@@ -68,6 +68,15 @@ await Product.find_one(Product.name == "Tony's").upsert(
 )
 ```
 
+## Response Type
+
+For the object methods `update` and `upsert`, you can use the `response_type` parameter to specify the type of response.
+
+The options are:
+- `UpdateResponse.UPDATE_RESULT` - returns the result of the update operation.
+- `UpdateResponse.NEW_DOCUMENT` - returns the newly updated document.
+- `UpdateResponse.OLD_DOCUMENT` - returns the document before the update.
+
 ## Deleting documents
 
 Deleting objects works just like updating them, you simply call `delete()` on the found documents:
@@ -81,11 +90,16 @@ await Product.find_one(Product.name == "Milka").delete()
 await Product.find(Product.category.name == "Chocolate").delete()
 ```
 
-## Response Type
+To delete all documents from a collection:
+```python
+await Product.delete_all()
+# or
+await Product.all().delete()
 
-For the object methods `update` and `upsert`, you can use the `response_type` parameter to specify the type of response.
+# Which is equivalent to
+await Product.find_all().delete()
+# and
+await Product.find({}).delete()
+await Product.find_many({}).delete()
+```
 
-The options are:
-- `UpdateResponse.UPDATE_RESULT` - returns the result of the update operation.
-- `UpdateResponse.NEW_DOCUMENT` - returns the newly updated document.
-- `UpdateResponse.OLD_DOCUMENT` - returns the document before the update.

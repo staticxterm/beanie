@@ -94,7 +94,7 @@ class House(Document):
 ```
 
 Other link patterns are not supported at this moment. If you need something more specific for your use-case, 
-please open an issue on the GitHub page - <https://github.com/roman-right/beanie>
+please open an issue on the GitHub page: <https://github.com/BeanieODM/beanie/issues>
 
 ## Write
 
@@ -223,7 +223,7 @@ await SelfLinkedSample.find(
 ).to_list()
 ```
 
-Also, you can set up the maximum nesting depth on the document definition level. You can read more about this [here](/tutorial/defining-a-document/#nested-documents-depth).
+Also, you can set up the maximum nesting depth on the document definition level. You can read more about this [here](defining-a-document.md/#nested-documents-depth).
 
 ### On-demand fetch
 
@@ -297,7 +297,7 @@ class Person(Document):
 The `original_field` parameter is required for the back link field.
 In Pydantic v2, it must be passed using the json_schema_extra argument in Field(...) to avoid deprecation warnings and ensure compatibility.
 
-Back links support all the operations that normal links support, but are virtual. This means that when searching the database, you will need to include `fetch_links=True` (see [Finding documents](/tutorial/finding-documents).), or you will recieve an empty 'BackLink' virtual object. It is not possible to `fetch()` this virtual link after the initial search.
+Back links support all the operations that normal links support, but are virtual. This means that when searching the database, you will need to include `fetch_links=True` (see [Finding documents](find.md/#finding-documents)), or you will recieve an empty 'BackLink' virtual object. It is not possible to `fetch()` this virtual link after the initial search.
 
 ## Limitations
 

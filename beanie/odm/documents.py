@@ -788,7 +788,7 @@ class Document(
 
         ```
 
-        Uses [Set operator](operators/update.md#set)
+        Uses [Set operator](operators/update.md#beanie.odm.operators.update.general.Set)
 
         :param expression: Dict[Union[ExpressionField, str, Any], Any] - keys and
         values to set
@@ -816,7 +816,7 @@ class Document(
         """
         Set current date
 
-        Uses [CurrentDate operator](operators/update.md#currentdate)
+        Uses [CurrentDate operator](operators/update.md#beanie.odm.operators.update.general.CurrentDate)
 
         :param expression: Dict[Union[datetime, ExpressionField, str], Any]
         :param session: Optional[AsyncClientSession] - pymongo session
@@ -854,7 +854,7 @@ class Document(
 
         ```
 
-        Uses [Inc operator](operators/update.md#inc)
+        Uses [Inc operator](operators/update.md/#beanie.odm.operators.update.general.Inc)
 
         :param expression: Dict[Union[ExpressionField, float, int, str], Any]
         :param session: Optional[AsyncClientSession] - pymongo session
@@ -1228,6 +1228,14 @@ class Document(
         """
         Returns a BulkWriter instance for handling bulk write operations.
 
+        Example:
+
+        This method is typically used within an asynchronous context manager.
+        ```python
+            async with Document.bulk_writer(ordered=True) as bulk:
+                await Document.insert_one(Document(field="value"), bulk_writer=bulk)
+        ```
+
         :param session: Optional[AsyncClientSession] - pymongo session.
             The session instance used for transactional operations.
         :param ordered: bool
@@ -1239,17 +1247,7 @@ class Document(
         :param comment: str, optional
             A user-provided comment to attach to the BulkWriter.
 
-        :returns: BulkWriter
-            An instance of BulkWriter configured with the provided settings.
-
-        Example Usage:
-        --------------
-        This method is typically used within an asynchronous context manager.
-
-        .. code-block:: python
-
-            async with Document.bulk_writer(ordered=True) as bulk:
-                await Document.insert_one(Document(field="value"), bulk_writer=bulk)
+        :returns: BulkWriter - An instance of BulkWriter configured with the provided settings.
         """
         return BulkWriter(
             session, ordered, cls, bypass_document_validation, comment

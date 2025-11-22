@@ -25,7 +25,7 @@ class Parent(UnionDoc):  # Union
         
 class One(Document):
     int_field: int = 0
-    shared: int = 0        
+    shared: int = 0
 
     class Settings:
         name = "One" # Name used to filer union document 'One', default to class name

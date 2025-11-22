@@ -8,38 +8,34 @@ Also, please read the [Code of Conduct](code-of-conduct.md).
 
 We assume you are familiar with the general forking and pull request workflow for submitting to open-source projects. If not, don't worry, there are plenty of good guides available. Maybe check out [this one](https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow).
 
-All the dependencies and build configs are set in the `pyproject.toml` file. There are three main dependency sections there:
+To install all required dependencies, including development dependencies, you need to have `uv` installed.
+Please find the installation instruction for your platform [here](https://docs.astral.sh/uv/getting-started/installation/).
 
-- dependencies: for the dependencies required to run Beanie
-- test: for the dependencies required to run tests
-- doc: for the dependencies required to build the documentation
-
-And there are other extra dependency sections for Beanie batteries. For example, the `queue` section contains dependencies that extend features of Beanie with a queue.
-
-To install all required dependencies, including test dependencies, you need to have uv installed.
-Please find installation instruction for your platform [here](https://docs.astral.sh/uv/getting-started/installation/).
-
-After uv installation, run the following command in the root directory of the Beanie project:
+After `uv` is installed, run the following command in the root directory of the Beanie project:
 
 ```shell
-uv sync --group test
+uv sync --frozen
 ```
 
-To install dependencies required for building the documentation, run:
+This will install all dependencies needed for development.
 
-```shell
-uv sync --group doc
-```
+### Additional info on dependencies
+All the dependencies and build configs are specified in the `pyproject.toml` file. 
 
-To install everything run:
+Dependencies required by the Beanie library are specified in the `dependencies` object under the `[project]` section.
+Other extra dependencies provided by the Beanie library are specified in the `[project.optional-dependencies]` section. For example, the `queue` extra installs dependencies that extend features of Beanie with a queue.
 
-```shell
-uv sync --all-extras --dev
-```
+Dependencies needed for development are specified under the `[dependency-groups]` section:
+
+- dev: all basic dependencies needed for development, includes test and lint groups
+- test: dependencies needed to run tests
+- lint: dependencies needed for linting
+- doc: dependencies needed to build the documentation
+
 
 ### Database connection
 
-To run tests and use Beanie in general, you will need an accessible MongoDB database. To use migrations, you will need a connection to a Replica Set or Mongos instance. All tests assume that the database is hosted locally on port `27017` and do not require authentication.
+To run tests and use Beanie in general, you will need an accessible MongoDB database. To use migrations, you will need a connection to a Replica Set or Mongos instance. All tests assume that the database is hosted locally on port `27017` and does not require authentication.
 
 ## Testing
 
@@ -48,7 +44,7 @@ Beanie uses [pytest](https://docs.pytest.org) for unit testing. To ensure the st
 - All the features will be covered and stay covered.
 - There is independence from other features and test cases.
 
-To run the test suite, make sure that you have MongoDB running and run `uv run pytest`.
+To run all tests, make sure that you have MongoDB running and run `uv run pytest`.
 
 ## Submitting new code
 
@@ -56,7 +52,7 @@ You can submit your changes through a pull request on GitHub. Please take into a
 
 ### Use pre-commit
 
-To ensure code consistency, Beanie uses Black and Ruff through pre-commit. To set it up, run:
+To ensure code consistency, Beanie uses the Ruff linter and formatter through pre-commit. To set it up, run:
 
 ```shell
 uv run pre-commit install
@@ -74,11 +70,14 @@ Please write clear documentation for any new functionality you add. Docstrings w
 
 ## Working on the documentation
 
-The documentation is generated using `pydoc-markdown`. To see a preview of any edits you make, you can run:
+Documentation dependencies are not installed automatically. To install documentation dependencies, run `uv sync --group doc --frozen`.
+
+Documentation is generated using `mkdocs`. Additionally, it uses the `mkdocs-material` theme and `mkdocstrings` for code reference generation.
+To see a preview of any edits you make, you can run:
 
 ```shell
-uv run pydoc-markdown --server
+uv run mkdocs serve
 ```
 
 and visit the printed address (usually `localhost:8000`) in your browser. Beware, the auto-recompiling might not work for everyone.
-This will automatically generate the API documentation from the source. All other documentation should be written by hand. The documentation is compiled using `mkdocs` behind the scenes. To change the table of contents or other options, check out `pydoc-markdown.yml`.
+This will automatically generate the API documentation from the source. All other documentation should be written by hand. To change the table of contents or other options, check out `mkdocs.yml`.

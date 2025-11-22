@@ -1,4 +1,4 @@
-[![Beanie](https://raw.githubusercontent.com/roman-right/beanie/main/assets/logo/white_bg.svg)](https://github.com/roman-right/beanie)
+[![Beanie](https://raw.githubusercontent.com/BeanieODM/beanie/main/assets/logo/white_bg.svg)](https://github.com/BeanieODM/beanie)
 
 [![shields badge](https://shields.io/badge/-docs-blue)](https://beanie-odm.dev)
 [![pypi](https://img.shields.io/pypi/v/beanie.svg)](https://pypi.python.org/pypi/beanie)
@@ -18,7 +18,7 @@ Let’s make Beanie better, together!
 
 ## Overview
 
-[Beanie](https://github.com/roman-right/beanie) - is an asynchronous Python object-document mapper (ODM) for MongoDB. Data models are based on [Pydantic](https://pydantic-docs.helpmanual.io/).
+[Beanie](https://github.com/BeanieODM/beanie) - is an asynchronous Python object-document mapper (ODM) for MongoDB. Data models are based on [Pydantic](https://docs.pydantic.dev/latest/).
 
 When using Beanie each database collection has a corresponding `Document` that
 is used to interact with that collection. In addition to retrieving data,
@@ -30,7 +30,7 @@ the parts of your app that actually matter.
 
 Data and schema migrations are supported by Beanie out of the box.
 
-There is a synchronous version of Beanie ODM - [Bunnet](https://github.com/roman-right/bunnet)
+There is a synchronous version of Beanie ODM - [Bunnet](https://github.com/BeanieODM/bunnet)
 
 ## Installation
 
@@ -125,7 +125,7 @@ Iliya Hosseini](https://github.com/IHosseini083)
 
 ### Resources
 
-- **[GitHub](https://github.com/roman-right/beanie)** - GitHub page of the
+- **[GitHub](https://github.com/BeanieODM/beanie)** - GitHub page of the
   project
 - **[Changelog](https://beanie-odm.dev/changelog)** - list of all
   the valuable changes
@@ -135,4 +135,4 @@ Iliya Hosseini](https://github.com/IHosseini083)
 ----
 Supported by [JetBrains](https://jb.gg/OpenSource)
 
-[![JetBrains](https://raw.githubusercontent.com/roman-right/beanie/main/assets/logo/jetbrains.svg)](https://jb.gg/OpenSource)
+[![JetBrains](https://raw.githubusercontent.com/BeanieODM/beanie/main/assets/logo/jetbrains.svg)](https://jb.gg/OpenSource)

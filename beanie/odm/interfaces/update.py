@@ -49,7 +49,7 @@ class UpdateMethods:
 
         ```
 
-        Uses [Set operator](operators/update.md#set)
+        Uses [Set operator](operators/update.md#beanie.odm.operators.update.general.Set)
 
         :param expression: Dict[Union[ExpressionField, str, Any], Any] - keys and
         values to set
@@ -71,7 +71,7 @@ class UpdateMethods:
         """
         Set current date
 
-        Uses [CurrentDate operator](operators/update.md#currentdate)
+        Uses [CurrentDate operator](operators/update.md#beanie.odm.operators.update.general.CurrentDate)
 
         :param expression: Dict[Union[datetime, ExpressionField, str], Any]
         :param session: Optional[AsyncClientSession] - pymongo session
@@ -106,7 +106,7 @@ class UpdateMethods:
 
         ```
 
-        Uses [Inc operator](operators/update.md#inc)
+        Uses [Inc operator](operators/update.md#beanie.odm.operators.update.general.Inc)
 
         :param expression: Dict[Union[ExpressionField, float, int, str], Any]
         :param session: Optional[AsyncClientSession] - pymongo session

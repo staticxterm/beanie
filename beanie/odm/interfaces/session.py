@@ -10,9 +10,11 @@ class SessionMethods:
 
     def set_session(self, session: Optional[AsyncClientSession] = None):
         """
-        Set session
-        :param session: Optional[AsyncClientSession] - pymongo session
-        :return:
+        Set session.
+
+        :param session: PyMongo session
+        :return: Query instance
+        :rtype: Self
         """
         if session is not None:
             self.session: Optional[AsyncClientSession] = session

@@ -1,0 +1,9 @@
+/* Adds blockquote styling to class docstrings and their children */
+.doc-class-blockquote,
+div.doc-contents:not(:first-of-type) {
+  padding-left: 25px;
+  border-left: .2rem solid var(--md-default-fg-color--lighter);
+  margin-bottom: 2em;
+  margin-top: 1em;
+}
+
