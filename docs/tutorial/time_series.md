@@ -2,7 +2,9 @@
 
 You can set up a timeseries collection using the inner `Settings` class.
 
-**Be aware, timeseries collections a supported by MongoDB 5.0 and higher only. The fields `bucket_max_span_seconds` and `bucket_rounding_seconds` however require MongoDB 6.3 or higher**
+!!! note
+    Be aware, timeseries collections are supported by MongoDB 5.0 and higher only.
+    The fields `bucket_max_span_seconds` and `bucket_rounding_seconds` however require MongoDB 6.3 or higher.
 
 ```python
 from datetime import datetime
@@ -28,4 +30,4 @@ class Sample(Document):
 
 TimeSeriesConfig fields reflect the respective parameters of the MongoDB timeseries creation function.
 
-MongoDB documentation: https://docs.mongodb.com/manual/core/timeseries-collections/
+MongoDB documentation: <https://docs.mongodb.com/manual/core/timeseries-collections/>

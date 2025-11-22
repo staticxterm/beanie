@@ -30,7 +30,7 @@ To update the changelog, follow these steps:
 1. Run the following command to generate the updated changelog:
 
    ```bash
-   python scripts/generate_changelog.py
+   uv run scripts/generate_changelog.py
    ```
 
 2. The script will generate the changelog for the new version.

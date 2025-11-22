@@ -1,3 +1,9 @@
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#   "requests<3"
+# ]
+# ///
 import subprocess
 from dataclasses import dataclass
 from datetime import datetime

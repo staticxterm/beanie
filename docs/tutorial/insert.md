@@ -42,7 +42,7 @@ await tonybar.insert()
 await marsbar.create()  # does exactly the same as insert()
 ```
 You can also call `save()`, which behaves in the same manner for new documents, but will also update existing documents. 
-See the [section on updating](updating-&-deleting.md) of this tutorial for more details.
+See the [section on updating](update_and_delete.md) of this tutorial for more details.
 
 If you prefer, you can also call the `insert_one` class method: 
 

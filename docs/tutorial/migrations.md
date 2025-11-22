@@ -64,10 +64,8 @@ The function itself must accept typed `input_document` and `output_document` arg
 
 ```python
 @iterative_migration()
-
-
 async def name_to_title(
-        self, input_document: OldNote, output_document: Note
+    self, input_document: OldNote, output_document: Note
 ):
 ```
 
@@ -106,10 +104,9 @@ Forward migration:
 class Forward:
     @iterative_migration()
     async def name_to_title(
-            self, input_document: OldNote, output_document: Note
+        self, input_document: OldNote, output_document: Note
     ):
         output_document.title = input_document.name
-
 ```
 
 Backward migration:
@@ -118,7 +115,7 @@ Backward migration:
 class Backward:
     @iterative_migration()
     async def title_to_name(
-            self, input_document: Note, output_document: OldNote
+        self, input_document: Note, output_document: OldNote
     ):
         output_document.name = input_document.title
 ```
@@ -126,7 +123,7 @@ class Backward:
 And a little more complex example:
 
 ```python
-from pydantic.main import BaseModel
+from pydantic import BaseModel
 
 from beanie import Document, iterative_migration
 
@@ -160,7 +157,7 @@ class Note(Document):
 class Forward:
     @iterative_migration()
     async def change_color(
-            self, input_document: OldNote, output_document: Note
+        self, input_document: OldNote, output_document: Note
     ):
         output_document.tag.title = input_document.tag.name
 
@@ -168,11 +165,11 @@ class Forward:
 class Backward:
     @iterative_migration()
     async def change_title(
-            self, input_document: Note, output_document: OldNote
+        self, input_document: Note, output_document: OldNote
     ):
         output_document.tag.name = input_document.tag.title
 ```
-All the examples of migrations can be found by [link](https://github.com/roman-right/beanie/tree/main/tests/migrations/migrations_for_test)
+All the examples of migrations can be found by [link](https://github.com/BeanieODM/beanie/tree/main/tests/migrations/migrations_for_test)
 
 ### Free fall migrations
 
@@ -198,7 +195,7 @@ async def name_to_title(self, session):
 #### The same example as for the iterative migration, but with free fall migration type
 
 ```python
-from pydantic.main import BaseModel
+from pydantic import BaseModel
 
 from beanie import Document, free_fall_migration
 
@@ -242,6 +239,5 @@ class Backward:
                 id=old_note.id, name=old_note.title, tag=old_note.tag
             )
             await new_note.replace(session=session)
-
 ```
-All the examples of migrations can be found by [link](https://github.com/roman-right/beanie/tree/main/tests/migrations/migrations_for_test)
+All the examples of migrations can be found by [link](https://github.com/BeanieODM/beanie/tree/main/tests/migrations/migrations_for_test)

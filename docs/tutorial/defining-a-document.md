@@ -47,7 +47,7 @@ It uses all the same patterns of `BaseModel`. But also it has special types of f
 
 `id` field of the `Document` class reflects the unique `_id` field of the MongoDB document. 
 Each object of the `Document` type has this field. 
-The default type of this is [PydanticObjectId](../api-documentation/fields.md/#pydanticobjectid).
+The default type of this is [PydanticObjectId](../api-documentation/fields.md/#beanie.odm.fields.PydanticObjectId).
 
 ```python
 class Sample(Document):
@@ -259,4 +259,4 @@ class Sample(Document):
         }
 ```
 
-Also, you can limit the nesting depth during find operations. You can read more about this [here](/tutorial/relations/#nested-links).
+Also, you can limit the nesting depth during find operations. You can read more about this [here](relations.md#nested-links).

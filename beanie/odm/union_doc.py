@@ -53,6 +53,14 @@ class UnionDoc(
         """
         Returns a BulkWriter instance for handling bulk write operations.
 
+        Example:
+
+        This method is typically used within an asynchronous context manager.
+        ```python
+            async with Document.bulk_writer(ordered=True) as bulk:
+                await Document.insert_one(Document(field="value"), bulk_writer=bulk)
+        ```
+
         :param session: Optional[AsyncClientSession] - pymongo session.
             The session instance used for transactional operations.
         :param ordered: bool
@@ -66,15 +74,6 @@ class UnionDoc(
 
         :returns: BulkWriter
             An instance of BulkWriter configured with the provided settings.
-
-        Example Usage:
-        --------------
-        This method is typically used within an asynchronous context manager.
-
-        .. code-block:: python
-
-            async with Document.bulk_writer(ordered=True) as bulk:
-                await Document.insert_one(Document(field="value"), bulk_writer=bulk)
         """
         return BulkWriter(
             session, ordered, cls, bypass_document_validation, comment
