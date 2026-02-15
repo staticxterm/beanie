@@ -597,7 +597,15 @@ class Initializer:
             elif output is not None:
                 output.class_name = f"{output.class_name}.{cls.__name__}"
                 cls._class_id = output.class_name
-                cls.set_collection_name(output.collection_name)
+                # Only override the subclass collection name if the subclass
+                # did not explicitly define `Settings.name` on its own Settings
+                settings_subclass = cls.__dict__.get("Settings", None)
+                has_explicit_name = (
+                    settings_subclass is not None
+                    and "name" in getattr(settings_subclass, "__dict__", {})
+                )
+                if not has_explicit_name:
+                    cls.set_collection_name(output.collection_name)
                 parent.add_child(cls._class_id, cls)
                 cls._parent = parent
                 cls._inheritance_inited = True
