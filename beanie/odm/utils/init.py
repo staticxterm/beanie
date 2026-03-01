@@ -1,10 +1,11 @@
 import importlib
 import inspect
+from collections.abc import Sequence
 from importlib.metadata import version
 from types import UnionType
 from typing import (  # noqa: UP035
+    Annotated,
     List,
-    Sequence,
     Union,
     get_args,
     get_origin,
@@ -201,27 +202,63 @@ class Initializer:
             cls._settings = parse_model(UnionDocSettings, settings_vars)
 
     # General. Relations
-
     def detect_link(
         self, field: FieldInfo, field_name: str
     ) -> LinkInfo | None:
         """
-        It detects link and returns LinkInfo if any found.
+        Detects a link annotation on a field and returns LinkInfo if found.
 
-        :param field: ModelField
-        :return: Optional[LinkInfo]
+        Supports the following annotation forms:
+            - Direct:              Link[MyDoc] / BackLink[MyDoc]
+            - List:                list[Link[MyDoc]] / list[BackLink[MyDoc]]
+            - Optional:            Optional[Link[MyDoc]] / Optional[BackLink[MyDoc]]
+            - Optional list:       Optional[list[Link[MyDoc]]] / Optional[list[BackLink[MyDoc]]]
+            - Annotated direct:    Annotated[MyDoc, Link[MyDoc]]
+            - Annotated optional:  Annotated[Optional[MyDoc], Optional[Link[MyDoc]]]
+            - Annotated with extra metadata: Annotated[MyDoc, Link[MyDoc], Field(...)]
+
+        :param field: FieldInfo — the Pydantic field to inspect
+        :param field_name: str — the name of the field on the model
+        :return: LinkInfo if a link annotation is detected, None otherwise
         """
+        annotation = field.annotation
+        link_classes = (Link, BackLink)
 
-        origin = get_origin(field.annotation)
-        args = get_args(field.annotation)
-        classes = [
-            Link,
-            BackLink,
-        ]
+        # Unwrap Annotated[MyDoc, Link[MyDoc]] — the only supported Annotated link form.
+        # The base type (first arg) is always the document class, and Link/BackLink
+        # must appear in the metadata (remaining args).
+        if get_origin(annotation) is Annotated:
+            annotated_args = get_args(annotation)
+            metadata = annotated_args[1:]
+            for meta in metadata:
+                if meta is None:
+                    continue
 
-        for cls in classes:
+                meta_origin = get_origin(meta)
+                # Direct: Annotated[MyDoc, Link[MyDoc]]
+                if meta_origin in link_classes:
+                    annotation = meta
+                    break
+
+                # Optional: Annotated[Optional[MyDoc], Optional[Link[MyDoc]]]
+                if (
+                    meta_origin in (Union, UnionType)
+                    and len(get_args(meta)) == 2
+                    and type(None) in get_args(meta)
+                ):
+                    inner = next(
+                        a for a in get_args(meta) if a is not type(None)
+                    )
+                    if get_origin(inner) in link_classes:
+                        annotation = meta  # keep Optional wrapper intact for OPTIONAL_DIRECT branch below
+                        break
+
+        origin = get_origin(annotation)
+        args = get_args(annotation)
+
+        for cls in link_classes:
             # Check if annotation is one of the custom classes
-            if get_origin(field.annotation) is cls:
+            if origin is cls:
                 if cls is Link:
                     return LinkInfo(
                         field_name=field_name,
@@ -268,6 +305,7 @@ class Initializer:
 
             # Check if annotation is Optional[custom class] or Optional[List[custom class]]
             elif (
+                # origin in (Union, UnionType))
                 (origin is Union or isinstance(field.annotation, UnionType))
                 and len(args) == 2
                 and type(None) in args
@@ -276,10 +314,11 @@ class Initializer:
                     optional = args[0]
                 else:
                     optional = args[1]
+
                 optional_origin = get_origin(optional)
                 optional_args = get_args(optional)
 
-                if get_origin(optional) is cls:
+                if optional_origin is cls:
                     if cls is Link:
                         return LinkInfo(
                             field_name=field_name,
