@@ -168,7 +168,7 @@ def test_indexed_field() -> None:
     """Test that fields can be declared and instantiated with Indexed()
     and Annotated[..., Indexed()]."""
 
-    # No error should be raised the document is properly initialized
+    # No error should be raised when the document is properly initialized
     # and `Indexed` is implemented correctly.
     DocumentTestModelIndexFlagsAnnotated(
         str_index="test",

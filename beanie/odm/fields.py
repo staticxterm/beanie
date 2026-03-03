@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import warnings
 from collections import OrderedDict
 from dataclasses import dataclass
 from enum import Enum
@@ -15,8 +16,8 @@ from typing import (
     Type,
     TypeVar,
     Union,
+    get_args,
 )
-from typing import OrderedDict as OrderedDictType
 
 from bson import DBRef, ObjectId
 from bson.errors import InvalidId
@@ -30,7 +31,6 @@ from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import core_schema
 from pydantic_core.core_schema import CoreSchema, ValidationInfo
 from pymongo import ASCENDING, IndexModel
-from typing_extensions import get_args
 
 from beanie.odm.enums import SortDirection
 from beanie.odm.operators.find.comparison import (
@@ -75,6 +75,12 @@ def Indexed(typ=None, index_type=ASCENDING, **kwargs: Any):
     """
     if typ is None:
         return IndexedAnnotation(_indexed=(index_type, kwargs))
+
+    warnings.warn(
+        "argument typ is deprecated please use Annotated instead",
+        DeprecationWarning,
+        stacklevel=2,
+    )
 
     class NewType(typ):
         _indexed = (index_type, kwargs)
@@ -331,7 +337,7 @@ class Link(Generic[T]):
     @staticmethod
     def repack_links(
         links: List[Union[Link[T], DocType]],
-    ) -> OrderedDictType[Any, Any]:
+    ) -> OrderedDict[Any, Any]:
         result = OrderedDict()
         for link in links:
             if isinstance(link, Link):
@@ -379,8 +385,8 @@ class Link(Generic[T]):
                     ),
                     document_class=document_class,
                 )
-            if isinstance(v, dict) or isinstance(v, BaseModel):
-                return parse_obj(document_class, v)
+            if isinstance(v, (dict, BaseModel)):
+                return parse_obj(document_class, v)  # type: ignore
 
             # Default fallback case for unknown type
             new_id = TypeAdapter(
@@ -448,8 +454,8 @@ class BackLink(Generic[T]):
             document_class = DocsRegistry.evaluate_fr(  # type: ignore
                 get_args(source_type)[0]
             )
-            if isinstance(v, dict) or isinstance(v, BaseModel):
-                return parse_obj(document_class, v)
+            if isinstance(v, (dict, BaseModel)):
+                return parse_obj(document_class, v)  # type: ignore
             return cls(document_class=document_class)
 
         return validate
@@ -552,7 +558,7 @@ class IndexModelField:
         return list(left_dict.values())
 
     @classmethod
-    def _validate(cls, v: Any) -> "IndexModelField":
+    def _validate(cls, v: Any) -> IndexModelField:
         if isinstance(v, IndexModel):
             return IndexModelField(v)
         else:

@@ -123,7 +123,7 @@ class Text(BaseFindEvaluationOperator):
 
     ```python
     class Sample(Document):
-        description: Indexed(str, pymongo.TEXT)
+        description: Annotated[str, Indexed(index_type=pymongo.TEXT)]
 
     Text("coffee")
     ```

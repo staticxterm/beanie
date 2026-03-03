@@ -1,4 +1,5 @@
 from importlib.metadata import version
+from typing import Annotated
 
 import pytest
 from pymongo import IndexModel
@@ -293,7 +294,7 @@ async def test_projection():
 
 async def test_index_recreation(db):
     class Sample1(Document):
-        name: Indexed(str, unique=True)
+        name: Annotated[str, Indexed(unique=True)]
 
         class Settings:
             name = "sample"
@@ -346,7 +347,7 @@ async def test_custom_init():
 
 async def test_index_on_custom_types(db):
     class Sample1(Document):
-        name: Indexed(Color, unique=True)
+        name: Annotated[Color, Indexed(unique=True)]
 
         class Settings:
             name = "sample"

@@ -19,7 +19,7 @@ class Category(BaseModel):
 class Product(Document):  # This is the model
     name: str
     description: Optional[str] = None
-    price: Indexed(float)
+    price: Annotated[float, Indexed()]
     category: Category
 
     class Settings:

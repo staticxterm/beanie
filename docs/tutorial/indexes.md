@@ -40,6 +40,7 @@ class Sample(Document):
     name: Annotated[str, Indexed(unique=True)]
 ```
 
+***Deprecated: ***
 The `Indexed` function can also be used directly in the type annotation, by giving it the wrapped type as the first argument. Note that this might not work with some Pydantic V2 types, such as `UUID4` or `EmailStr`.
 
 ```python

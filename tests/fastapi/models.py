@@ -1,4 +1,4 @@
-from typing import List
+from typing import Annotated, List
 
 from pydantic import Field
 
@@ -21,8 +21,8 @@ class RoofAPI(Document):
 
 class HouseAPI(Document):
     windows: List[Link[WindowAPI]]
-    name: Indexed(str)
-    height: Indexed(int) = 2
+    name: Annotated[str, Indexed()]
+    height: Annotated[int, Indexed()] = 2
 
 
 class House(Document):

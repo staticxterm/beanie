@@ -21,7 +21,7 @@ class Category(BaseModel):
 class Product(Document):  # This is the model
     name: str
     description: Optional[str] = None
-    price: Indexed(float, pymongo.DESCENDING)
+    price: Annotated[float, Indexed(index_type=pymongo.DESCENDING)]
     category: Category
 
     class Settings:
@@ -77,14 +77,14 @@ class Sample(Document):
 
 ### Indexed
 
-To set up an index over a single field, the `Indexed` function can be used to wrap the type:
+To index a single field, the `Indexed` function can be passed as metadata to `Annotated`:
 
 ```python
 from beanie import Indexed
 
 
 class Sample(Document):
-    num: Indexed(int)
+    num: Annotated[int, Indexed()]
     description: str
 ```
 
@@ -92,7 +92,7 @@ The `Indexed` function takes an optional argument `index_type`, which may be set
 
 ```python
 class Sample(Document):
-    description: Indexed(str, index_type=pymongo.TEXT)
+    description: Annotated[str, Indexed(index_type=pymongo.TEXT)]
 ```
 
 The `Indexed` function also supports pymongo `IndexModel` kwargs arguments ([PyMongo Documentation](https://pymongo.readthedocs.io/en/stable/api/pymongo/operations.html#pymongo.operations.IndexModel)). 
@@ -101,8 +101,11 @@ For example, to create a `unique` index:
 
 ```python
 class Sample(Document):
-    name: Indexed(str, unique=True)
+    name: Annotated[str, Indexed(unique=True)]
 ```
+
+> **Note**: The older Indexed(str, unique=True) syntax (passing the type as the first argument) is deprecated
+> and will emit a warning. Always use e.g. Annotated[str, Indexed(unique=True)] instead.
 
 ## Settings
 

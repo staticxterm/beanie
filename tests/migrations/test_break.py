@@ -1,3 +1,5 @@
+from typing import Annotated
+
 import pytest
 from pydantic.main import BaseModel
 
@@ -13,7 +15,7 @@ class Tag(BaseModel):
 
 
 class OldNote(Document):
-    name: Indexed(str, unique=True)
+    name: Annotated[str, Indexed(unique=True)]
     tag: Tag
 
     class Settings:
@@ -21,7 +23,7 @@ class OldNote(Document):
 
 
 class Note(Document):
-    name: Indexed(str, unique=True)
+    name: Annotated[str, Indexed(unique=True)]
     title: str
     tag: Tag
 

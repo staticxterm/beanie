@@ -130,8 +130,8 @@ class GeoObject(BaseModel):
 
 class Sample(Document):
     timestamp: datetime.datetime
-    increment: Indexed(int)
-    integer: Indexed(int)
+    increment: Annotated[int, Indexed()]
+    integer: Annotated[int, Indexed()]
     float_num: float
     string: str
     nested: Nested
@@ -185,26 +185,28 @@ class DocumentTestModelWithCustomCollectionName(Document):
 
 
 class DocumentTestModelWithSimpleIndex(Document):
-    test_int: Indexed(int)
+    test_int: Annotated[int, Indexed()]
     test_list: List[SubDocument]
-    test_str: Indexed(str, index_type=pymongo.TEXT)
+    test_str: Annotated[str, Indexed(index_type=pymongo.TEXT)]
 
 
 class DocumentTestModelWithIndexFlags(Document):
-    test_int: Indexed(int, sparse=True)
-    test_str: Indexed(str, index_type=pymongo.DESCENDING, unique=True)
+    test_int: Annotated[int, Indexed(sparse=True)]
+    test_str: Annotated[
+        str, Indexed(index_type=pymongo.DESCENDING, unique=True)
+    ]
 
 
 class DocumentTestModelWithIndexFlagsAliases(Document):
-    test_int: Indexed(int, sparse=True) = Field(alias="testInt")
-    test_str: Indexed(str, index_type=pymongo.DESCENDING, unique=True) = Field(
-        alias="testStr"
-    )
+    test_int: Annotated[int, Indexed(sparse=True)] = Field(alias="testInt")
+    test_str: Annotated[
+        str, Indexed(index_type=pymongo.DESCENDING, unique=True)
+    ] = Field(alias="testStr")
 
 
 class DocumentTestModelIndexFlagsAnnotated(Document):
     str_index: Indexed(str, index_type=pymongo.TEXT)
-    str_index_annotated: Indexed(str, index_type=pymongo.ASCENDING)
+    str_index_annotated: Annotated[str, Indexed(index_type=pymongo.ASCENDING)]
     uuid_index_annotated: Annotated[UUID4, Indexed(unique=True)]
 
 
@@ -531,8 +533,8 @@ class House(Document):
     door: Link[Door]
     roof: Optional[Link[Roof]] = None
     yards: Optional[List[Link[Yard]]] = None
-    height: Indexed(int) = 2
-    name: Indexed(str)
+    height: Annotated[int, Indexed()] = 2
+    name: Annotated[str, Indexed()]
 
     model_config = ConfigDict(
         extra="allow",

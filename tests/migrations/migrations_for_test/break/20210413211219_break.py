@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from pydantic.main import BaseModel
 
 from beanie import Document, Indexed, PydanticObjectId, iterative_migration
@@ -9,7 +11,7 @@ class Tag(BaseModel):
 
 
 class OldNote(Document):
-    name: Indexed(str, unique=True)
+    name: Annotated[str, Indexed(unique=True)]
     tag: Tag
 
     class Settings:
@@ -17,7 +19,7 @@ class OldNote(Document):
 
 
 class Note(Document):
-    name: Indexed(str, unique=True)
+    name: Annotated[str, Indexed(unique=True)]
     title: str
     tag: Tag
 
