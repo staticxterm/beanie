@@ -1,8 +1,6 @@
 import inspect
 from functools import wraps
-from typing import TYPE_CHECKING, Any, TypeVar, cast, overload
-
-from typing_extensions import ParamSpec
+from typing import TYPE_CHECKING, Any, ParamSpec, TypeVar, cast, overload
 
 from beanie.exceptions import StateManagementIsTurnedOff, StateNotSaved
 

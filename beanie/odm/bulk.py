@@ -1,3 +1,4 @@
+import sys
 from collections.abc import Mapping
 from types import TracebackType
 from typing import TYPE_CHECKING, Any, TypeAlias
@@ -12,7 +13,11 @@ from pymongo import (
 )
 from pymongo.asynchronous.client_session import AsyncClientSession
 from pymongo.results import BulkWriteResult
-from typing_extensions import Self
+
+if sys.version_info >= (3, 11):  # pragma: no cover
+    from typing import Self
+else:  # pragma: no cover
+    from typing_extensions import Self
 
 if TYPE_CHECKING:
     from beanie import Document

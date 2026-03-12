@@ -1,7 +1,6 @@
+import sys
 from collections.abc import Callable, Coroutine
-from typing import Any, TypeAlias
-
-from typing_extensions import Protocol, assert_type
+from typing import Any, Protocol, TypeAlias
 
 from beanie import Document
 from beanie.odm.actions import EventTypes, wrap_with_actions
@@ -11,6 +10,11 @@ from beanie.odm.utils.state import (
     save_state_after,
     saved_state_needed,
 )
+
+if sys.version_info >= (3, 11):  # pragma: no cover
+    from typing import assert_type
+else:  # pragma: no cover
+    from typing_extensions import assert_type
 
 
 def sync_func(doc_self: Document, arg1: str, arg2: int, /) -> Document:

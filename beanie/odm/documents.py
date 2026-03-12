@@ -1,4 +1,5 @@
 import asyncio
+import sys
 import warnings
 from collections.abc import Callable, Coroutine, Iterable, Mapping
 from datetime import datetime, timezone
@@ -7,6 +8,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     ClassVar,
+    ParamSpec,
     TypeAlias,
     TypeVar,
 )
@@ -29,7 +31,12 @@ from pymongo.results import (
     DeleteResult,
     InsertManyResult,
 )
-from typing_extensions import ParamSpec, Self
+
+if sys.version_info >= (3, 11):  # pragma: no cover
+    from typing import Self
+else:  # pragma: no cover
+    from typing_extensions import Self
+
 
 from beanie.exceptions import (
     CollectionWasNotInitialized,

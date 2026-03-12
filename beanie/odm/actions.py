@@ -6,11 +6,10 @@ from functools import wraps
 from typing import (
     TYPE_CHECKING,
     Any,
+    ParamSpec,
     TypeVar,
     cast,
 )
-
-from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
     from beanie.odm.documents import AsyncDocMethod, Document

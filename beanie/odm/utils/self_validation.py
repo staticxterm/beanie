@@ -1,7 +1,5 @@
 from functools import wraps
-from typing import TYPE_CHECKING, TypeVar, cast
-
-from typing_extensions import ParamSpec
+from typing import TYPE_CHECKING, ParamSpec, TypeVar, cast
 
 if TYPE_CHECKING:
     from beanie import Document
