@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "beanie"
-version = "2.0.1"
+version = "2.1.0"
 description = "Asynchronous Python ODM for MongoDB"
 readme = "README.md"
 requires-python = ">=3.10,<3.14"
@@ -107,9 +107,7 @@ testpaths = [
     "tests",
 ]
 filterwarnings = [
-    "error",
-    "ignore::DeprecationWarning",
-    "ignore::UserWarning",
+    "error"
 ]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"

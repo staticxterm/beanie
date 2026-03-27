@@ -382,7 +382,9 @@ class Initializer:
             cls._link_fields = {}
         for k, v in get_model_fields(cls).items():
             path = v.alias or k
-            setattr(cls, k, ExpressionField(path))
+            annotation = getattr(v, "annotation", None)
+            resolution = ExpressionField._resolve_field(annotation)
+            setattr(cls, k, ExpressionField(path, field_resolution=resolution))
 
             link_info = self.detect_link(v, k)
             depth_level = cls.get_settings().max_nesting_depths_per_field.get(
@@ -409,15 +411,17 @@ class Initializer:
         """
         ActionRegistry.clean_actions(cls)
         for attr in dir(cls):
+            if attr.startswith("__"):  # Skip only dunder/magic attributes
+                continue
+
             f = getattr(cls, attr)
-            if inspect.isfunction(f):
-                if hasattr(f, "has_action"):
-                    ActionRegistry.add_action(
-                        document_class=cls,
-                        event_types=f.event_types,  # type: ignore
-                        action_direction=f.action_direction,  # type: ignore
-                        funct=f,
-                    )
+            if inspect.isfunction(f) and hasattr(f, "has_action"):
+                ActionRegistry.add_action(
+                    document_class=cls,
+                    event_types=f.event_types,  # type: ignore
+                    action_direction=f.action_direction,  # type: ignore
+                    funct=f,
+                )
 
     async def init_document_collection(self, cls):
         """
@@ -550,6 +554,9 @@ class Initializer:
 
         # get db version
         cls._database_major_version = self._database_major_version
+
+        own_settings = cls.__dict__.get("Settings")
+        class_id_value = getattr(own_settings, "class_id_value", None)
         if cls not in self.inited_classes:
             self.set_default_class_vars(cls)
             self.init_settings(cls)
@@ -568,10 +575,16 @@ class Initializer:
                     class_name=cls.__name__,
                     collection_name=cls.get_collection_name(),
                 )
-                cls._class_id = cls.__name__
+                cls._class_id = (
+                    cls.__name__ if class_id_value is None else class_id_value
+                )
                 cls._inheritance_inited = True
             elif output is not None:
-                output.class_name = f"{output.class_name}.{cls.__name__}"
+                output.class_name = (
+                    f"{output.class_name}.{cls.__name__}"
+                    if class_id_value is None
+                    else class_id_value
+                )
                 cls._class_id = output.class_name
                 cls.set_collection_name(output.collection_name)
                 parent.add_child(cls._class_id, cls)
@@ -610,7 +623,9 @@ class Initializer:
             cls._link_fields = {}
         for k, v in get_model_fields(cls).items():
             path = v.alias or k
-            setattr(cls, k, ExpressionField(path))
+            annotation = getattr(v, "annotation", None)
+            resolution = ExpressionField._resolve_field(annotation)
+            setattr(cls, k, ExpressionField(path, field_resolution=resolution))
             link_info = self.detect_link(v, k)
             depth_level = cls.get_settings().max_nesting_depths_per_field.get(
                 k, None

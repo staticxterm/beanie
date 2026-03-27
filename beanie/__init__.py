@@ -35,9 +35,13 @@ from beanie.odm.queries.update import UpdateResponse
 from beanie.odm.settings.timeseries import Granularity, TimeSeriesConfig
 from beanie.odm.union_doc import UnionDoc
 from beanie.odm.utils.init import init_beanie
+from beanie.odm.utils.update_merge import (
+    ActionConflictResolution,
+    MergeConflictError,
+)
 from beanie.odm.views import View
 
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 __all__ = [
     # ODM
     "Document",
@@ -52,6 +56,8 @@ __all__ = [
     "Granularity",
     "SortDirection",
     "MergeStrategy",
+    "ActionConflictResolution",
+    "MergeConflictError",
     # Actions
     "before_event",
     "after_event",

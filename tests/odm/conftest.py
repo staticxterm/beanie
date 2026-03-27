@@ -10,10 +10,14 @@ from tests.odm.models import (
     ADocument,
     BDocument,
     Bicycle,
+    BicycleWithCustomClassId,
     Bike,
+    BikeWithCustomClassId,
     BsonRegexDoc,
     Bus,
+    BusWithCustomClassId,
     Car,
+    CarWithCustomClassId,
     Doc2NonRoot,
     DocNonRoot,
     DocumentForEncodingTest,
@@ -36,6 +40,8 @@ from tests.odm.models import (
     DocumentUnion,
     DocumentWithActions,
     DocumentWithActions2,
+    DocumentWithActionWinsStrategy,
+    DocumentWithAliasedLink,
     DocumentWithBackLink,
     DocumentWithBackLinkForNesting,
     DocumentWithBsonBinaryField,
@@ -45,11 +51,14 @@ from tests.odm.models import (
     DocumentWithCustomIdInt,
     DocumentWithCustomIdUUID,
     DocumentWithCustomInit,
+    DocumentWithCustomIterRootModel,
     DocumentWithDecimalField,
+    DocumentWithDeepNestedAlias,
     DocumentWithDeprecatedHiddenField,
     DocumentWithEnumKeysDict,
     DocumentWithExcludedField,
     DocumentWithExtras,
+    DocumentWithFrozenField,
     DocumentWithHttpUrlField,
     DocumentWithIndexedObjectId,
     DocumentWithIndexMerging1,
@@ -61,6 +70,7 @@ from tests.odm.models import (
     DocumentWithListBackLink,
     DocumentWithListLink,
     DocumentWithListOfLinks,
+    DocumentWithNestedAlias,
     DocumentWithOptionalBackLink,
     DocumentWithOptionalListBackLink,
     DocumentWithPydanticConfig,
@@ -76,6 +86,9 @@ from tests.odm.models import (
     DocumentWithTurnedOnSavePrevious,
     DocumentWithTurnedOnStateManagement,
     DocumentWithTurnedOnStateManagementWithCustomId,
+    DocumentWithUnderscoreAction,
+    DocumentWithUpdateFieldAction,
+    DocumentWithValidateOnSaveAction,
     DocumentWithValidationOnSave,
     DocWithCallWrapper,
     Door,
@@ -94,6 +107,7 @@ from tests.odm.models import (
     Option1,
     Option2,
     Owner,
+    OwnerLinksToCustomClassId,
     PackageElemMatch,
     Region,
     Roof,
@@ -106,6 +120,7 @@ from tests.odm.models import (
     SubDocument,
     UsersAddresses,
     Vehicle,
+    VehicleWithCustomClassId,
     Window,
     WindowWithRevision,
     WindowWithValidationOnSave,
@@ -150,6 +165,10 @@ TESTING_MODELS = [
     Yard,
     Lock,
     InheritedDocumentWithActions,
+    DocumentWithUpdateFieldAction,
+    DocumentWithUnderscoreAction,
+    DocumentWithValidateOnSaveAction,
+    DocumentWithActionWinsStrategy,
     DocumentForEncodingTest,
     DocumentForEncodingTestDate,
     DocumentWithStringField,
@@ -169,6 +188,12 @@ TESTING_MODELS = [
     Car,
     Bus,
     Owner,
+    VehicleWithCustomClassId,
+    BicycleWithCustomClassId,
+    BikeWithCustomClassId,
+    CarWithCustomClassId,
+    BusWithCustomClassId,
+    OwnerLinksToCustomClassId,
     SampleWithMutableObjects,
     DocNonRoot,
     Doc2NonRoot,
@@ -215,7 +240,13 @@ TESTING_MODELS = [
     BsonRegexDoc,
     NativeRegexDoc,
     DocumentWithExcludedField,
+    DocumentWithFrozenField,
+    DocumentWithNestedAlias,
+    DocumentWithDeepNestedAlias,
+    DocumentWithAliasedLink,
 ]
+
+TESTING_MODELS.append(DocumentWithCustomIterRootModel)
 
 
 @pytest.fixture
@@ -305,11 +336,14 @@ async def session(cli):
 
 
 @pytest.fixture
+def suppress_user_warning(recwarn):
+    warnings.simplefilter("ignore", UserWarning)
+    return
+
+
+@pytest.fixture
 def recwarn_always(recwarn):
     warnings.simplefilter("always")
-    # ResourceWarnings about unclosed sockets can occur nondeterministically
-    # (during GC) which throws off the tests
-    warnings.simplefilter("ignore", ResourceWarning)
     return recwarn
 
 

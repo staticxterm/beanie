@@ -48,12 +48,17 @@ from beanie import (
     Update,
     ValidateOnSave,
 )
-from beanie.odm.actions import Delete, after_event, before_event
+from beanie.odm.actions import (
+    Delete,
+    after_event,
+    before_event,
+)
 from beanie.odm.custom_types import re
 from beanie.odm.custom_types.bson.binary import BsonBinary
 from beanie.odm.fields import BackLink, Link, PydanticObjectId
 from beanie.odm.settings.timeseries import TimeSeriesConfig
 from beanie.odm.union_doc import UnionDoc
+from beanie.odm.utils.update_merge import ActionConflictResolution
 
 
 class Color:
@@ -381,6 +386,54 @@ class DocumentWithActions2(Document):
 class InheritedDocumentWithActions(DocumentWithActions): ...
 
 
+class DocumentWithUpdateFieldAction(Document):
+    """Document where before_event(Update) modifies a regular persisted field."""
+
+    name: str
+    tag: str | None = None
+
+    @before_event(Update)
+    def set_tag(self):
+        self.tag = "updated"
+
+
+class DocumentWithUnderscoreAction(Document):
+    name: str
+    creator_id: str | None = None
+
+    @before_event(Insert)
+    def _set_creator(self):
+        self.creator_id = "some_user"
+
+
+class DocumentWithValidateOnSaveAction(Document):
+    """Document with before_event + validate_on_save to test ordering."""
+
+    name: str
+    normalized_name: str | None = None
+
+    @before_event(Insert, Replace, Save)
+    def normalize(self):
+        self.normalized_name = self.name.strip().lower()
+
+    class Settings:
+        validate_on_save = True
+
+
+class DocumentWithActionWinsStrategy(Document):
+    """Document using ACTION_WINS conflict resolution."""
+
+    name: str
+    tag: str | None = None
+
+    @before_event(Update)
+    def set_tag(self):
+        self.tag = "action_value"
+
+    class Settings:
+        action_conflict_resolution = ActionConflictResolution.ACTION_WINS
+
+
 class InternalDoc(BaseModel):
     _private_field: str = PrivateAttr(default="TEST_PRIVATE")
     num: int = 100
@@ -479,10 +532,6 @@ class DocumentWithPydanticConfig(Document):
 class DocumentWithExtras(Document):
     model_config = ConfigDict(extra="allow")
 
-    num_1: int
-
-
-class DocumentWithExtrasKw(Document, extra="allow"):
     num_1: int
 
 
@@ -670,6 +719,70 @@ class Owner(Document):
     vehicles: list[Link[Vehicle]] = []
 
 
+# classes for inheritance test with custom class_ids
+class VehicleWithCustomClassId(Document):
+    """Root parent for testing flat inheritance"""
+
+    # Model hierarchy (names without the WithCustomClassId suffix)
+    #
+    #               Vehicle
+    #              /   |   \
+    #             /    |    \
+    #        Bicycle  Bike  Car
+    #                         \
+    #                          \
+    #                          Bus
+    color: str
+
+    @after_event(Insert)
+    def on_object_create(self):
+        # this event will be triggered for all children too (self will have corresponding type)
+        ...
+
+    class Settings:
+        is_root = True
+        name = "vehicles-custom-class-id"
+        class_id = "type"
+
+
+class BicycleWithCustomClassId(VehicleWithCustomClassId):
+    class Settings:
+        class_id_value = "bicycle"
+
+    type: str = "bicycle"
+    frame: int
+    wheels: int
+
+
+class CarWithCustomClassId(VehicleWithCustomClassId, Fuelled):
+    class Settings:
+        class_id_value = "car"
+
+    type: str = "car"
+    body: str
+
+
+class BikeWithCustomClassId(VehicleWithCustomClassId, Fuelled):
+    class Settings:
+        class_id_value = "bike"
+
+    type: str = "bike"
+
+
+class BusWithCustomClassId(CarWithCustomClassId, Fuelled):
+    # Do not set, must be inferred from class name and parent class.
+    # class Settings:
+    #     class_id_value = "bus"
+
+    type: str = "car.BusWithCustomClassId"
+    seats: int
+
+
+class OwnerLinksToCustomClassId(Document):
+    name: str
+    vehicles: list[Link[VehicleWithCustomClassId]] = []
+
+
 class MixinNonRoot(BaseModel):
     id: int = Field(..., ge=1, le=254)
 
@@ -807,7 +920,7 @@ class DocWithCollectionInnerClass(Document):
 class DocumentWithDecimalField(Document):
     amt: DecimalAnnotation
     other_amt: DecimalAnnotation = Field(
-        decimal_places=1, multiple_of=0.5, default=0
+        decimal_places=1, multiple_of=0.5, default=DecimalAnnotation(0)
     )
 
     model_config = ConfigDict(
@@ -855,6 +968,14 @@ class DocumentWithRevisionAndKeepNullsFalse(Document):
 class DocumentWithExcludedField(Document):
     included_field: int
     excluded_field: int | None = Field(default=None, exclude=True)
+
+
+class DocumentWithFrozenField(Document):
+    name: str
+    immutable_value: str = Field(frozen=True)
+
+    class Settings:
+        name = "docs_with_frozen_field"
 
 
 class ReleaseElemMatch(BaseModel):
@@ -1023,8 +1144,23 @@ class DocumentWithBsonBinaryField(Document):
     binary_field: BsonBinary
 
 
+class IterableRootList(RootModel[list[int]]):
+    """RootModel with custom __iter__ that yields non-tuple values."""
+
+    def __iter__(self):
+        return iter(self.root)
+
+
 class DocumentWithRootModelAsAField(Document):
     pets: RootModel[list[str]]
+
+
+class DocumentWithCustomIterRootModel(Document):
+    """Document with a RootModel field that overrides __iter__."""
+
+    items: IterableRootList = Field(
+        default_factory=lambda: IterableRootList([])
+    )
 
 
 class DocWithCallWrapper(Document):
@@ -1106,3 +1242,34 @@ class BsonRegexDoc(Document):
 
 class NativeRegexDoc(Document):
     regex: re.Pattern | None
+
+
+# Models for testing alias resolution in nested fields (#937, #945)
+class NestedWithAlias(BaseModel):
+    unit_class: str = Field(alias="unitClass")
+    item_count: int = Field(alias="itemCount")
+
+
+class NestedDeep(BaseModel):
+    inner: NestedWithAlias = Field(alias="innerAlias")
+
+
+class DocumentWithNestedAlias(Document):
+    nested_field: NestedWithAlias
+
+    class Settings:
+        name = "docs_with_nested_alias"
+
+
+class DocumentWithDeepNestedAlias(Document):
+    deep: NestedDeep
+
+    class Settings:
+        name = "docs_with_deep_nested_alias"
+
+
+class DocumentWithAliasedLink(Document):
+    linked: Link["DocumentToBeLinked"] = Field(alias="linkedAlias")
+
+    class Settings:
+        name = "docs_with_aliased_link"
